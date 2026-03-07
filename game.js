@@ -1,5 +1,5 @@
 // ============================================================
-// Blanc Manger Coco — P2P Multiplayer with PeerJS
+// Owt Manger Coco — P2P Multiplayer with PeerJS
 // ============================================================
 
 (function () {
@@ -571,9 +571,9 @@
 
     $("btn-share").addEventListener("click", () => {
         const shareUrl = window.location.origin + window.location.pathname + "#" + roomCode;
-        const text = "Rejoins ma partie Blanc Manger Coco !";
+        const text = "Rejoins ma partie Owt Manger Coco !";
         if (navigator.share) {
-            navigator.share({ title: "Blanc Manger Coco", text, url: shareUrl }).catch(() => {});
+            navigator.share({ title: "Owt Manger Coco", text, url: shareUrl }).catch(() => {});
         } else {
             navigator.clipboard.writeText(text + "\n" + shareUrl).then(() => {
                 $("btn-share").textContent = "OK";
