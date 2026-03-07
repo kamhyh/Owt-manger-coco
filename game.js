@@ -601,8 +601,8 @@
     // Lobby
     $("btn-copy-code").addEventListener("click", () => {
         navigator.clipboard.writeText(roomCode).then(() => {
-            $("btn-copy-code").textContent = "OK !";
-            setTimeout(() => ($("btn-copy-code").textContent = "📋"), 1500);
+            $("btn-copy-code").textContent = "Copié";
+            setTimeout(() => ($("btn-copy-code").textContent = "Copier"), 1500);
         });
     });
 

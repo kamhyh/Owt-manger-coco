@@ -13,10 +13,10 @@
         <div id="screen-menu" class="screen active">
             <div class="menu-container">
                 <h1 class="title">Blanc Manger Coco</h1>
-                <p class="subtitle">Le jeu de cartes hilarant — en ligne !</p>
+                <p class="subtitle">Le jeu de cartes, en ligne entre amis</p>
                 <div class="menu-buttons">
                     <button id="btn-create" class="btn btn-primary">Créer une partie</button>
-                    <button id="btn-join" class="btn btn-secondary">Rejoindre une partie</button>
+                    <button id="btn-join" class="btn btn-secondary">Rejoindre</button>
                 </div>
                 <div id="join-form" class="hidden">
                     <input type="text" id="input-room-code" placeholder="Code de la partie" maxlength="6" autocomplete="off">
@@ -29,11 +29,11 @@
         <!-- SCREEN: Lobby -->
         <div id="screen-lobby" class="screen">
             <div class="lobby-container">
-                <h2>Salon d'attente</h2>
+                <h2>Salon</h2>
                 <div class="room-code-display">
                     <span>Code :</span>
                     <span id="lobby-room-code" class="code"></span>
-                    <button id="btn-copy-code" class="btn btn-small" title="Copier">📋</button>
+                    <button id="btn-copy-code" class="btn btn-small btn-secondary" title="Copier">Copier</button>
                 </div>
                 <div class="player-name-input">
                     <input type="text" id="input-player-name" placeholder="Ton pseudo" maxlength="20" autocomplete="off">
