@@ -107,7 +107,7 @@
     function createPeer(id) {
         return new Promise((resolve, reject) => {
             const p = new Peer(id, {
-                debug: 1,
+                debug: 0,
                 config: {
                     iceServers: [
                         { urls: "stun:stun.l.google.com:19302" },
@@ -115,18 +115,9 @@
                     ],
                 },
             });
-            p.on("open", (peerId) => {
-                console.log("[BMC] Peer open:", peerId);
-                resolve(p);
-            });
-            p.on("error", (err) => {
-                console.error("[BMC] Peer error:", err.type, err.message);
-                reject(err);
-            });
-            p.on("disconnected", () => {
-                console.warn("[BMC] Peer disconnected from signaling server, reconnecting...");
-                p.reconnect();
-            });
+            p.on("open", (peerId) => resolve(p));
+            p.on("error", (err) => reject(err));
+            p.on("disconnected", () => p.reconnect());
         });
     }
 
@@ -317,20 +308,19 @@
 
     async function joinRoom(code) {
         roomCode = code.toUpperCase().trim();
+        showError("menu-error", "Connexion en cours...");
         try {
             peer = await createPeer(undefined);
-        } catch (_) {
-            showError("menu-error", "Erreur de connexion.");
+        } catch (e) {
+            showError("menu-error", "Erreur serveur: " + (e.type || e.message || e));
             return;
         }
         myId = peer.id;
 
-        console.log("[BMC] Connecting to host:", ROOM_PREFIX + roomCode);
         const conn = peer.connect(ROOM_PREFIX + roomCode, { reliable: true });
         hostConn = conn;
 
         conn.on("open", () => {
-            console.log("[BMC] Connected to host!");
             showScreen("lobby");
             $("lobby-room-code").textContent = roomCode;
             $("lobby-host-controls").classList.add("hidden");
@@ -347,14 +337,21 @@
         });
 
         conn.on("error", (err) => {
-            console.error("[BMC] Connection error:", err.type, err.message || err);
-            showError("menu-error", "Partie introuvable.");
+            showError("menu-error", "Erreur: " + (err.type || err.message || "inconnue"));
+        });
+
+        peer.on("error", (err) => {
+            if (err.type === "peer-unavailable") {
+                showError("menu-error", "Partie introuvable. Verifie le code.");
+            } else {
+                showError("menu-error", "Erreur: " + (err.type || err.message));
+            }
+            if (peer) peer.destroy();
         });
 
         setTimeout(() => {
             if (!conn.open) {
-                console.warn("[BMC] Connection timeout — peer.open:", peer.open, "conn.open:", conn.open);
-                showError("menu-error", "Connexion impossible. Verifie le code ou reessaie.");
+                showError("menu-error", "Timeout. La partie n'existe peut-etre plus.");
                 if (peer) peer.destroy();
             }
         }, 12000);
