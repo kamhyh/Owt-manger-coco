@@ -416,8 +416,8 @@
 
         const btn = $("btn-start-game");
         if (btn) {
-            btn.disabled = gameState.players.length < 3;
-            btn.textContent = gameState.players.length < 3 ? "Min. 3 joueurs" : "Lancer la partie";
+            btn.disabled = gameState.players.length < 1;
+            btn.textContent = "Lancer la partie";
         }
     }
 
