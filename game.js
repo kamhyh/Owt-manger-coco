@@ -107,18 +107,26 @@
     function createPeer(id) {
         return new Promise((resolve, reject) => {
             const p = new Peer(id, {
-                debug: 0,
+                debug: 1,
                 config: {
                     iceServers: [
                         { urls: "stun:stun.l.google.com:19302" },
                         { urls: "stun:stun1.l.google.com:19302" },
-                        { urls: "turn:openrelay.metered.ca:80", username: "openrelayproject", credential: "openrelayproject" },
-                        { urls: "turn:openrelay.metered.ca:443", username: "openrelayproject", credential: "openrelayproject" },
                     ],
                 },
             });
-            p.on("open", () => resolve(p));
-            p.on("error", (err) => reject(err));
+            p.on("open", (peerId) => {
+                console.log("[BMC] Peer open:", peerId);
+                resolve(p);
+            });
+            p.on("error", (err) => {
+                console.error("[BMC] Peer error:", err.type, err.message);
+                reject(err);
+            });
+            p.on("disconnected", () => {
+                console.warn("[BMC] Peer disconnected from signaling server, reconnecting...");
+                p.reconnect();
+            });
         });
     }
 
@@ -317,10 +325,12 @@
         }
         myId = peer.id;
 
+        console.log("[BMC] Connecting to host:", ROOM_PREFIX + roomCode);
         const conn = peer.connect(ROOM_PREFIX + roomCode, { reliable: true });
         hostConn = conn;
 
         conn.on("open", () => {
+            console.log("[BMC] Connected to host!");
             showScreen("lobby");
             $("lobby-room-code").textContent = roomCode;
             $("lobby-host-controls").classList.add("hidden");
@@ -336,10 +346,14 @@
             if (myName !== "Joueur") conn.send({ type: "set-name", name: myName });
         });
 
-        conn.on("error", () => showError("menu-error", "Partie introuvable."));
+        conn.on("error", (err) => {
+            console.error("[BMC] Connection error:", err.type, err.message || err);
+            showError("menu-error", "Partie introuvable.");
+        });
 
         setTimeout(() => {
             if (!conn.open) {
+                console.warn("[BMC] Connection timeout — peer.open:", peer.open, "conn.open:", conn.open);
                 showError("menu-error", "Connexion impossible. Verifie le code ou reessaie.");
                 if (peer) peer.destroy();
             }
