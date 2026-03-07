@@ -143,6 +143,7 @@
 
         showScreen("lobby");
         $("lobby-room-code").textContent = roomCode;
+        window.location.hash = roomCode;
         $("lobby-host-controls").classList.remove("hidden");
         $("lobby-guest-msg").classList.add("hidden");
         updateLobbyPlayerList();
@@ -569,12 +570,12 @@
     });
 
     $("btn-share").addEventListener("click", () => {
-        const text = "Rejoins ma partie Blanc Manger Coco ! Code : " + roomCode;
-        const url = window.location.href;
+        const shareUrl = window.location.origin + window.location.pathname + "#" + roomCode;
+        const text = "Rejoins ma partie Blanc Manger Coco !";
         if (navigator.share) {
-            navigator.share({ title: "Blanc Manger Coco", text, url }).catch(() => {});
+            navigator.share({ title: "Blanc Manger Coco", text, url: shareUrl }).catch(() => {});
         } else {
-            navigator.clipboard.writeText(text + "\n" + url).then(() => {
+            navigator.clipboard.writeText(text + "\n" + shareUrl).then(() => {
                 $("btn-share").textContent = "OK";
                 setTimeout(() => ($("btn-share").textContent = "Partager"), 1200);
             });
@@ -673,8 +674,19 @@
         saveSession();
     };
 
-    // Auto-reconnect on page load
-    (function tryReconnect() {
+    // Auto-join from URL hash (e.g. #ABC12) or reconnect from session
+    (function autoConnect() {
+        const hash = window.location.hash.replace("#", "").trim();
+
+        // If URL has a room code hash, auto-join as guest
+        if (hash.length >= 3) {
+            window.location.hash = "";
+            $("input-room-code").value = hash;
+            joinRoom(hash);
+            return;
+        }
+
+        // Otherwise try session reconnect
         const session = loadSession();
         if (!session) return;
 
@@ -682,7 +694,6 @@
         $("input-player-name").value = myName;
 
         if (session.isHost) {
-            // Re-create room with same code
             roomCode = session.roomCode;
             createPeer(ROOM_PREFIX + roomCode).then((p) => {
                 peer = p;
@@ -692,6 +703,7 @@
 
                 showScreen("lobby");
                 $("lobby-room-code").textContent = roomCode;
+                window.location.hash = roomCode;
                 $("lobby-host-controls").classList.remove("hidden");
                 $("lobby-guest-msg").classList.add("hidden");
                 updateLobbyPlayerList();
@@ -710,7 +722,6 @@
                 clearSession();
             });
         } else {
-            // Re-join as guest
             joinRoom(session.roomCode);
         }
     })();

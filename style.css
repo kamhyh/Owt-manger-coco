@@ -145,9 +145,10 @@ body {
 .btn--full { width: 100%; }
 
 .btn--tiny {
-    padding: 6px 14px;
+    padding: 8px 14px;
     font-size: 0.78rem;
     border-radius: 6px;
+    min-height: 36px;
 }
 
 .btn--confirm {
@@ -190,14 +191,16 @@ body {
     background: var(--white);
     border: 1.5px solid var(--gray-200);
     border-radius: var(--radius);
-    padding: 16px 20px;
+    padding: 14px 16px;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    gap: 10px;
     margin-bottom: 20px;
+    text-align: center;
 }
 .code-box__code {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: 700;
     letter-spacing: 6px;
     font-variant-numeric: tabular-nums;
@@ -280,8 +283,8 @@ body {
 /* --- Top bar (game) --- */
 .topbar {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 8px;
     margin-bottom: 16px;
     padding-bottom: 12px;
     border-bottom: 1px solid var(--gray-200);
@@ -512,11 +515,10 @@ body {
 
 /* --- Mobile-first: base is mobile, scale up --- */
 
-/* Small tweaks for very narrow screens */
-@media (max-width: 360px) {
+/* Very narrow screens */
+@media (max-width: 340px) {
     .hand { grid-template-columns: 1fr 1fr; }
     .acard { padding: 12px 10px; font-size: 0.8rem; }
-    .qcard { padding: 20px 14px; font-size: 0.95rem; }
 }
 
 /* Tablets and up */
@@ -527,8 +529,14 @@ body {
     .hand { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
     .acard { padding: 18px; font-size: 0.9rem; }
     .logo-card { width: 48px; height: 60px; font-size: 1.4rem; }
-    .code-box { padding: 18px 24px; }
+    .code-box {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 18px 24px;
+        text-align: left;
+    }
     .code-box__code { font-size: 2rem; }
+    .topbar { flex-direction: row; }
 }
 
 /* Desktop */
