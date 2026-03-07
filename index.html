@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blanc Manger Coco - Multijoueur</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- SCREEN: Main Menu -->
+        <div id="screen-menu" class="screen active">
+            <div class="menu-container">
+                <h1 class="title">Blanc Manger Coco</h1>
+                <p class="subtitle">Le jeu de cartes hilarant — en ligne !</p>
+                <div class="menu-buttons">
+                    <button id="btn-create" class="btn btn-primary">Créer une partie</button>
+                    <button id="btn-join" class="btn btn-secondary">Rejoindre une partie</button>
+                </div>
+                <div id="join-form" class="hidden">
+                    <input type="text" id="input-room-code" placeholder="Code de la partie" maxlength="6" autocomplete="off">
+                    <button id="btn-join-confirm" class="btn btn-primary">Rejoindre</button>
+                </div>
+                <div id="menu-error" class="error hidden"></div>
+            </div>
+        </div>
+
+        <!-- SCREEN: Lobby -->
+        <div id="screen-lobby" class="screen">
+            <div class="lobby-container">
+                <h2>Salon d'attente</h2>
+                <div class="room-code-display">
+                    <span>Code :</span>
+                    <span id="lobby-room-code" class="code"></span>
+                    <button id="btn-copy-code" class="btn btn-small" title="Copier">📋</button>
+                </div>
+                <div class="player-name-input">
+                    <input type="text" id="input-player-name" placeholder="Ton pseudo" maxlength="20" autocomplete="off">
+                    <button id="btn-set-name" class="btn btn-small">OK</button>
+                </div>
+                <h3>Joueurs (<span id="player-count">0</span>)</h3>
+                <ul id="player-list" class="player-list"></ul>
+                <div id="lobby-host-controls" class="hidden">
+                    <div class="settings-row">
+                        <label for="input-points-to-win">Points pour gagner :</label>
+                        <select id="input-points-to-win">
+                            <option value="3">3</option>
+                            <option value="5" selected>5</option>
+                            <option value="7">7</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+                    <button id="btn-start-game" class="btn btn-primary btn-large" disabled>Lancer la partie (min. 3 joueurs)</button>
+                </div>
+                <div id="lobby-guest-msg" class="hidden">
+                    <p>En attente du lancement par l'hôte...</p>
+                </div>
+                <div id="lobby-error" class="error hidden"></div>
+            </div>
+        </div>
+
+        <!-- SCREEN: Game -->
+        <div id="screen-game" class="screen">
+            <div class="game-container">
+                <div class="game-header">
+                    <div class="scoreboard-toggle">
+                        <button id="btn-toggle-scores" class="btn btn-small">Scores</button>
+                    </div>
+                    <div class="round-info">
+                        <span id="game-round">Tour 1</span>
+                        <span id="game-judge">Juge : —</span>
+                    </div>
+                </div>
+
+                <div id="scoreboard-panel" class="scoreboard-panel hidden">
+                    <ul id="scoreboard-list"></ul>
+                </div>
+
+                <div class="question-card-area">
+                    <div id="question-card" class="card question-card">
+                        <p id="question-text"></p>
+                    </div>
+                </div>
+
+                <!-- Player selecting a card -->
+                <div id="phase-select" class="game-phase hidden">
+                    <p class="phase-instruction">Choisis ta meilleure carte !</p>
+                    <div id="hand-cards" class="hand-cards"></div>
+                </div>
+
+                <!-- Waiting for others -->
+                <div id="phase-waiting" class="game-phase hidden">
+                    <p class="phase-instruction">En attente des autres joueurs... (<span id="waiting-count">0</span>/<span id="waiting-total">0</span>)</p>
+                </div>
+
+                <!-- Judge view: selecting the winner -->
+                <div id="phase-judge" class="game-phase hidden">
+                    <p class="phase-instruction">Tu es le juge ! Choisis la meilleure réponse.</p>
+                    <div id="judge-cards" class="judge-cards"></div>
+                </div>
+
+                <!-- Judge waiting for cards -->
+                <div id="phase-judge-waiting" class="game-phase hidden">
+                    <p class="phase-instruction">Tu es le juge ! Attends que tout le monde joue... (<span id="judge-waiting-count">0</span>/<span id="judge-waiting-total">0</span>)</p>
+                </div>
+
+                <!-- Round result -->
+                <div id="phase-result" class="game-phase hidden">
+                    <div class="result-display">
+                        <p class="result-winner"><span id="result-winner-name"></span> remporte le tour !</p>
+                        <div id="result-card" class="card answer-card result-answer"></div>
+                        <button id="btn-next-round" class="btn btn-primary hidden">Tour suivant</button>
+                        <p id="result-wait" class="hidden">L'hôte lance le prochain tour...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN: Game Over -->
+        <div id="screen-gameover" class="screen">
+            <div class="gameover-container">
+                <h2>Partie terminée !</h2>
+                <div class="winner-display">
+                    <span id="winner-name" class="winner-name"></span>
+                    <span>a gagné !</span>
+                </div>
+                <ul id="final-scores" class="player-list"></ul>
+                <button id="btn-new-game" class="btn btn-primary">Nouvelle partie</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="cards.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
