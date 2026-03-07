@@ -606,6 +606,19 @@
         });
     });
 
+    $("btn-share").addEventListener("click", () => {
+        const text = "Rejoins ma partie Blanc Manger Coco ! Code : " + roomCode;
+        const url = window.location.href;
+        if (navigator.share) {
+            navigator.share({ title: "Blanc Manger Coco", text, url }).catch(() => {});
+        } else {
+            navigator.clipboard.writeText(text + "\n" + url).then(() => {
+                $("btn-share").textContent = "Copié";
+                setTimeout(() => ($("btn-share").textContent = "Partager"), 1500);
+            });
+        }
+    });
+
     $("btn-set-name").addEventListener("click", () => {
         const name = $("input-player-name").value.trim();
         if (!name) return;
