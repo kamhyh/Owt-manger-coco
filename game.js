@@ -601,7 +601,7 @@
     });
 
     $("btn-start-game").addEventListener("click", () => {
-        if (isHost && gameState.players.length >= 3) hostStartGame();
+        if (isHost && gameState.players.length >= 1) hostStartGame();
     });
 
     $("btn-toggle-scores").addEventListener("click", () => {
