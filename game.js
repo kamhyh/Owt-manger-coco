@@ -242,7 +242,8 @@
             }
             case "judge-pick": {
                 if (gameState.phase === "judge" && peerId === gameState.players[gameState.judgeIndex]?.id) {
-                    resolveRound(data.playerId);
+                    const picked = gameState.playedCards[data.cardIndex];
+                    if (picked) resolveRound(picked.playerId);
                 }
                 break;
             }
@@ -531,12 +532,12 @@
     function renderJudgeCards(playedCards) {
         const container = $("judge-cards");
         container.innerHTML = "";
-        playedCards.forEach((pc) => {
+        playedCards.forEach((pc, index) => {
             const div = document.createElement("div");
             div.className = "acard";
             div.textContent = pc.card;
             div.addEventListener("click", () => {
-                sendToHost({ type: "judge-pick", playerId: pc.playerId });
+                sendToHost({ type: "judge-pick", cardIndex: index });
             });
             container.appendChild(div);
         });
